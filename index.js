@@ -42,6 +42,27 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/allToys' , async (req , res) =>{
+            const cursor = toysCollections.find()
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        app.get('/myToys/:email', async (req , res) =>{
+            const email = req.params.email;
+            console.log(email)
+            let query = {};
+            if(!email){
+                return res.status(403).send({error:1 , message :'Unauthorize user'})
+            }
+            if(email){
+                query= {sellerEmail: email}
+            }
+            const result = await toysCollections.find(query).toArray();
+            res.send(result)
+
+        })
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });

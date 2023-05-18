@@ -63,6 +63,23 @@ async function run() {
 
         })
 
+        const indexKeys = {name:1}
+        const indexOptions= {name:'name'}
+        const result = await toysCollections.createIndex(indexKeys , indexOptions)
+
+        app.get('/allToys/:search' , async (req , res) =>{
+            const searchText = req.params.search;
+
+            const result = await toysCollections.find({
+                $or: [
+                    {name:{$regex :searchText , $options : 'i'}}
+                ]
+            }).toArray()
+
+            res.send(result)
+
+        })
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });

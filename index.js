@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion ,ObjectId} = require('mongodb');
 require('dotenv').config()
 
 const app = express();
@@ -58,7 +58,7 @@ async function run() {
             if(email){
                 query= {sellerEmail: email}
             }
-            const result = await toysCollections.find(query).toArray();
+            const result = await toysCollections.find(query).sort({price: -1}).toArray();
             res.send(result)
 
         })
@@ -78,6 +78,13 @@ async function run() {
 
             res.send(result)
 
+        })
+
+        app.delete('/deleteToys/:id' , async (req , res) =>{
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const result =await toysCollections.deleteOne(query)
+            res.send(result)
         })
 
 

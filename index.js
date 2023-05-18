@@ -94,6 +94,21 @@ async function run() {
             res.send(result)
         })
 
+        app.put('/update/:id' , async (req ,res) => {
+            const id = req.params.id ;
+            const newData = req.body;
+            const filter = {_id: new ObjectId(id)};
+            const updatedData = {
+                $set: {
+                    price:newData.price,
+                    quantity:newData.quantity,
+                    description: newData.description
+                }
+            }
+            const result = await toysCollections.updateOne(filter , updatedData);
+            res.send(result)
+        })
+
         
 
 

@@ -34,9 +34,23 @@ async function run() {
         await client.connect();
 
         const toysCollections = client.db('toysDB').collection('allToys')
+        const trendingToysCollection = client.db('toysDB').collection('trendingToys')
+        const customerReviewCollection = client.db('toysDB').collection('customerReview')
+
+        app.get('/trendingToys' , async (req ,res) => {
+            const result = await trendingToysCollection.find().toArray()
+            res.send(result)
+        })
+
+        app.get('/customerReview' , async (req , res) =>{
+            const result = await customerReviewCollection.find().toArray()
+            res.send(result)
+        })
 
         app.post('/addToy' , async (req , res) =>{
             const toy = req.body;
+            const price = parseInt(toy.price)
+             toy.price =price
             // console.log(toy)
             const result = await toysCollections.insertOne(toy)
             res.send(result)
@@ -44,22 +58,45 @@ async function run() {
 
         app.get('/allToys' , async (req , res) =>{
             const cursor = toysCollections.find()
-            const result = await cursor.toArray();
+            const result = await cursor.limit(20).toArray();
             res.send(result)
         })
 
-        app.get('/myToys/:email', async (req , res) =>{
-            const email = req.params.email;
-            console.log(email)
-            let query = {};
-            if(!email){
+        app.get('/myToys', async (req , res) =>{
+         
+            const email = req.query.email;
+            const price = req.query.price
+            
+
+            if(email){
+
+              
+                if(price == 'ascending'){
+                    console.log(email,price)
+                    const result =await toysCollections.find({sellerEmail : email}).sort({price : 1}).toArray()
+                    return res.send(result)
+                }else if(price == 'descending'){
+                    const result = await toysCollections.find({sellerEmail : email}).sort({price : -1}).toArray()
+                    return res.send(result)
+                }else{
+                    const result = await toysCollections.find({sellerEmail : email}).toArray();
+                    res.send(result)
+                }
+            }else{
                 return res.status(403).send({error:1 , message :'Unauthorize user'})
             }
-            if(email){
-                query= {sellerEmail: email}
-            }
-            const result = await toysCollections.find(query).sort({price: -1}).toArray();
-            res.send(result)
+            // if(email){
+
+            // }
+            // let query = {};
+            // if(!email){
+            //     return res.status(403).send({error:1 , message :'Unauthorize user'})
+            // }
+            // if(email){
+            //     query= {sellerEmail: email}
+            // }
+            // const result = await toysCollections.find(query).sort({price: -1}).toArray();
+            // res.send(result)
 
         })
 
@@ -97,12 +134,15 @@ async function run() {
         app.put('/update/:id' , async (req ,res) => {
             const id = req.params.id ;
             const newData = req.body;
+            const price = parseInt(newData.price)
+            newData.price = price
             const filter = {_id: new ObjectId(id)};
             const updatedData = {
                 $set: {
                     price:newData.price,
                     quantity:newData.quantity,
-                    description: newData.description
+                    description: newData.description,
+                   
                 }
             }
             const result = await toysCollections.updateOne(filter , updatedData);

@@ -109,6 +109,20 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/details/:id' , async (req , res) =>{
+            const id = req.params.id ;
+            const query = {_id: new ObjectId(id)}
+            const result = await toysCollections.findOne(query);
+            res.send(result)
+        })
+
+        app.get('/categories/:category' , async (req , res) => {
+            const category = req.params.category
+            const query = {subCategory: category}
+            const result = await toysCollections.find(query).toArray()
+            res.send(result)
+        })
+
         
 
 

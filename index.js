@@ -85,18 +85,7 @@ async function run() {
             }else{
                 return res.status(403).send({error:1 , message :'Unauthorize user'})
             }
-            // if(email){
-
-            // }
-            // let query = {};
-            // if(!email){
-            //     return res.status(403).send({error:1 , message :'Unauthorize user'})
-            // }
-            // if(email){
-            //     query= {sellerEmail: email}
-            // }
-            // const result = await toysCollections.find(query).sort({price: -1}).toArray();
-            // res.send(result)
+         
 
         })
 

@@ -92,8 +92,6 @@ app.get('/myToys', async (req, res) => {
 
 
     if (email) {
-
-
         if (price == 'ascending') {
             console.log(email, price)
             const result = await toysCollections.find({ sellerEmail: email }).sort({ price: 1 }).toArray()

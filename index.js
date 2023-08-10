@@ -59,6 +59,12 @@ run().catch(console.dir);
 const toysCollections = client.db('toysDB').collection('allToys')
 const trendingToysCollection = client.db('toysDB').collection('trendingToys')
 const customerReviewCollection = client.db('toysDB').collection('customerReview')
+const blogs1Collection = client.db('toysDB').collection('blogs1')
+
+app.get('/blogs1' , async(req ,res) =>{
+    const result = await blogs1Collection.find().toArray()
+    res.send(result)
+})
 
 app.get('/trendingToys', async (req, res) => {
     const result = await trendingToysCollection.find().toArray()
